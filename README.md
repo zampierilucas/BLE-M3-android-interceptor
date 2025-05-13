@@ -1,48 +1,50 @@
-# Beauty-R1 android interceptor
+# BLE-M3 Android Interceptor
 
+This project, **BLE-M3**, is a fork of the original [Beauty-R1](https://github.com/olivluca/bluetooth-tiktok-remote). It provides a solution for intercepting input events from a BLE (Bluetooth Low Energy) clicker device and injecting keypresses on Android devices. The program is designed to work with devices that emulate mouse input but need to be repurposed for keyboard-like functionality.
 
-The Beauty-R1 is a bluetooth clicker that I bought thinking
-it would emulate a bluetooth keyboard.
+[<img src="BLE-M3.jpg" />](./BLE-M3.jpg)
 
-[<img src="beauty.png" />](./beauty.png)
+## Overview
 
-It turns out that it emulates a mouse instead: when you press a button,
-it simulates dragging the mouse pointer, not useful for what I need.
+The **BLE-M3 Android Interceptor** is a C program that listens to input events from a BLE clicker device and translates them into keypress events. It is intended to run on an Android device via an `adb shell` session, as it requires access to `/dev/input/eventX` devices. The program uses the `input keyevent X` command to inject keypresses into the system.
 
-Since [I couldn't find a development kit](https://github.com/olivluca/bluetooth-tiktok-remote)
-to modify its firmware, I wrote this C program that intercepts the events from the clicker
-and injects keypresses.
+## Features
 
-It's meant to run in an android tablet via adb shell (since it needs 
-access to the devices under /dev/input/eventX) and uses the "input keyevent
-X" command to inject the keypresses.
+- Intercepts input events from BLE clicker devices.
+- Translates mouse-like input into keypress events.
+- Can run in debug mode to display all received events.
+- Designed for use on Android devices with `adb` access.
 
-I compile it with 
+## Compilation
 
-```
-arm-linux-gnueabi-gcc --static beauty.c -o beauty
-```
+A pre-compiled binary for ARM devices is available in the [releases page](../../releases).
 
-then I can push it to the tablet 
+If you prefer to compile from source, the program uses the **arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-linux-gnueabihf** toolchain. To compile the program, use the following command:
 
-```
-adb push beauty /data/local/tmp/beauty
+```bash
+arm-none-linux-gnueabihf-gcc --static BLE-M3.c -o BLE-M3
 ```
 
-You can test it via adb shell either running
+## Deployment
+Once compiled, the binary can be pushed to the Android device using adb:
 
-```
-/data/local/tmp/beauty
-```
-
-or 
-
-```
-/data/local/tmp/beauty debug
+```bash
+adb push BLE-M3 /data/local/tmp/
 ```
 
-(this way it will print out all the events received from the clicker).
+## Usage
 
-Since I don't want to keep an adb connection, I wrote an
-[Automate](https://llamalab.com/automate/)  macro with
-the [ADB shell command](https://llamalab.com/automate/doc/block/adb_shell_command.html) block.
+You can run the program on the Android device via adb shell:
+
+```bash
+/data/local/tmp/BLE-M3
+```
+
+Alternatively, you can run it in debug mode to print all received events:
+
+```bash
+/data/local/tmp/BLE-M3 debug
+```
+
+## Automation
+To avoid maintaining an active adb connection, you can use the Automate or Tasker to create a macro. The macro can execute the program using the ADB shell command once it detects that the BLE-M3 has been connected.
