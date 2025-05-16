@@ -34,15 +34,16 @@ adb push BLE-M3 /data/local/tmp/
 
 ## Usage
 
-You can run the program on the Android device via adb shell:
+You can run the program on the Android device via adb shell in three modes:
 
 ```bash
+# Default mode - uses input keyevent for sending keypresses
 /data/local/tmp/BLE-M3
-```
 
-Alternatively, you can run it in debug mode to print all received events:
+# Event mode - uses am broadcast events instead of keyevents (com.BLE-M3.UP/DOWN/LEFT/RIGHT/PHOTO/ENTER)
+/data/local/tmp/BLE-M3 event
 
-```bash
+# Debug mode - prints all received events
 /data/local/tmp/BLE-M3 debug
 ```
 
