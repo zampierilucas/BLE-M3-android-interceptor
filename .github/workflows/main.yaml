@@ -25,7 +25,7 @@ jobs:
         ./arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-gcc --static BLE-M3.c -o BLE-M3
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: BLE-M3-binary
         path: BLE-M3
