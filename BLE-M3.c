@@ -44,6 +44,7 @@ int y = 1904;
 int direction = 0;
 
 bool debug = false;
+bool use_am = false;  // Control which send method to use
 
 #define debugln(...)                                                           \
   if (debug)                                                                   \
@@ -174,6 +175,24 @@ static int sendkeycode(int k) {
   return 0;
 }
 
+
+/*
+  Forks and sends a keycode using the "am" program
+
+*/
+static int sendkeycodeevent(char* k) {
+  int my_pid;
+  char buffer[100];
+  printf("key %s", k);
+  snprintf(buffer, sizeof(buffer), "am broadcast -a com.BLE-M3.%s", k);
+  if (0 == (my_pid = fork())) {
+    system(buffer);
+    exit(0);
+  }
+  return 0;
+}
+
+
 /*
  Actions for a button
 
@@ -207,7 +226,11 @@ int btcodes[] = {
 
 void dobutton(enum buttons b) {
   printf(":%s\n", btname[b]);
-  sendkeycode(btcodes[b]);
+  if (use_am) {
+    sendkeycodeevent(btname[b]);
+  } else {
+    sendkeycode(btcodes[b]);
+  }
 }
 
 /*
@@ -358,6 +381,9 @@ int main(int argc, char **argv) {
   if (argc > 1) {
     if (strcmp(argv[1], "debug") == 0) {
       debug = true;
+    } else if (strcmp(argv[1], "am") == 0) {
+      printf("Using am\n");
+      use_am = true;
     }
   }
 
