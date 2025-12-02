@@ -1,0 +1,36 @@
+services:
+  # Build service - compiles binaries
+  build:
+    build:
+      context: .
+      target: builder
+      network: host
+    image: blem3-builder:latest
+    network_mode: host
+    volumes:
+      - .:/build
+      - ./build:/build/build
+    working_dir: /build
+    command: sh -c "echo 'Ready to build'"
+
+  # Build ARMv7 binary
+  build-armv7:
+    extends: build
+    command: sh -c "mkdir -p build && arm-linux-gnueabi-gcc --static BLE-M3.c -o build/BLE-M3-armv7 && ls -lh build/BLE-M3-armv7"
+
+  # Build ARM hard-float binary
+  build-armhf:
+    extends: build
+    command: sh -c "mkdir -p build && arm-linux-gnueabihf-gcc --static BLE-M3.c -o build/BLE-M3-armhf && ls -lh build/BLE-M3-armhf"
+
+  # Build all architectures
+  build-all:
+    extends: build
+    command: sh -c "mkdir -p build && arm-linux-gnueabi-gcc --static BLE-M3.c -o build/BLE-M3-armv7 && arm-linux-gnueabihf-gcc --static BLE-M3.c -o build/BLE-M3-armhf && ls -lh build/"
+
+  # Interactive shell for custom commands
+  shell:
+    extends: build
+    command: /bin/bash
+    stdin_open: true
+    tty: true

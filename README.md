@@ -19,17 +19,28 @@ The **BLE-M3 Android Interceptor** is a C program that listens to input events f
 
 A pre-compiled binary for ARM devices is available in the [releases page](../../releases).
 
-If you prefer to compile from source, the program uses the **arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-linux-gnueabihf** toolchain. To compile the program, use the following command:
+### Quick Start
 
 ```bash
-arm-none-linux-gnueabihf-gcc --static BLE-M3.c -o BLE-M3
+# Build all ARM architectures
+just all
+
+# Build specific ARM architecture
+just armv7
+just armhf
+
+# Build for local development/testing (x86_64)
+just dev
 ```
 
+For detailed build instructions and troubleshooting, see [BUILD.md](BUILD.md).
+
 ## Deployment
-Once compiled, the binary can be pushed to the Android device using adb:
+
+Once compiled, the binary can be deployed to the Android device using adb:
 
 ```bash
-adb push BLE-M3 /data/local/tmp/
+adb push build/BLE-M3-armv7 /data/local/tmp/BLE-M3
 ```
 
 ## Usage

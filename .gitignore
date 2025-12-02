@@ -50,3 +50,12 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Build output
+build/
+BLE-M3
+BLE-M3-armv7
+BLE-M3-armhf
+
+# Docker/Podman volumes
+.docker/

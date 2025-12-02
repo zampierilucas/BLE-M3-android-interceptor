@@ -33,6 +33,19 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+/* Compatibility for newer kernel headers (>= 5.11) where input_event.time
+ * was replaced with input_event_sec and input_event_usec */
+#ifndef input_event_sec
+#define input_event_sec time.tv_sec
+#define input_event_usec time.tv_usec
+#endif
+
+/* Helper macro to get timeval from input_event for newer kernels */
+#define input_event_to_timeval(ev, tv) do { \
+    (tv)->tv_sec = (ev)->input_event_sec; \
+    (tv)->tv_usec = (ev)->input_event_usec; \
+} while(0)
+
 int button = 0;
 int x = 1904;
 int y = 1904;
@@ -361,15 +374,17 @@ void longpress(struct input_event *ev, int index) {
   // after a different keypress or 1.3 seconds (the repetition is about 1.1
   // seconds) we can accept a new long press
   if (longdone[index]) {
+    struct timeval evtime;
+    input_event_to_timeval(ev, &evtime);
     if (ev->code != longkeycodes[index] ||
-        lapsed(&prevlong[index], &ev->time, 1, 300000))
+        lapsed(&prevlong[index], &evtime, 1, 300000))
       longdone[index] = false;
   }
   if (ev->code == longkeycodes[index]) {
     if (!longdone[index])
       dobutton(btPhoto);
     longdone[index] = true;
-    prevlong[index] = ev->time;
+    input_event_to_timeval(ev, &prevlong[index]);
   }
 }
 
